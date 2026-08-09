@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment variables / secrets
+.env
+.env.*
+!.env.example
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build
+dist/
+build/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
