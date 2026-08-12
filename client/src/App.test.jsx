@@ -34,7 +34,7 @@ describe("App routing", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: /welcome to your secure digital space/i,
+        name: /authentication system/i,
       }),
     ).toBeTruthy();
   });
