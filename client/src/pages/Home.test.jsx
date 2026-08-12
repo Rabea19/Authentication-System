@@ -35,7 +35,7 @@ afterEach(() => {
 });
 
 describe("Home page", () => {
-  test("shows the about section and login form", () => {
+  test("shows the portfolio project summary and login form", () => {
     render(
       <MemoryRouter>
         <Home />
@@ -44,11 +44,18 @@ describe("Home page", () => {
 
     expect(
       screen.getByRole("heading", {
-        name: /welcome/i,
+        name: "Authentication System",
+        level: 1,
       }),
     ).toBeTruthy();
 
-    expect(screen.getByText(/about/i)).toBeTruthy();
+    expect(screen.getByText("FULL-STACK PORTFOLIO PROJECT")).toBeTruthy();
+
+    expect(
+      screen.getByText("Secure Full-Stack Authentication Application"),
+    ).toBeTruthy();
+
+    expect(screen.getByText("JWT Authentication")).toBeTruthy();
 
     const emailInput = screen.getByLabelText(/email/i);
 

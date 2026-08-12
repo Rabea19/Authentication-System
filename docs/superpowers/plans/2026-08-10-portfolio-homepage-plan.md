@@ -1,184 +1,145 @@
 # Portfolio Homepage Redesign Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+## الهدف
 
-**Goal:** Transform the existing authentication homepage into a polished portfolio project page for Rabea Saad while preserving all current authentication functionality.
+هنحوّل الصفحة الرئيسية الحالية من صفحة Authentication عادية إلى Portfolio Project احترافي خاص بـ Rabea Saad، مع الحفاظ على كل وظائف الـ Login و Sign Up الحالية بدون ما نكسر أي حاجة.
 
-**Architecture:** Keep the existing React authentication architecture unchanged and redesign only the presentation layer of the homepage. `Home.jsx` will continue owning the Login / Sign Up state and authentication handlers, while portfolio copy, project features, contact links, and the live demo presentation are added around the existing flow. Motion will use lightweight CSS and Tailwind utilities instead of adding an animation dependency.
+## بيانات المطور
 
-**Tech Stack:** React 19, React Router, Tailwind CSS 4, Vite 8, Vitest, Testing Library.
+- الاسم: Rabea Saad
+- المسمى: Full-Stack JavaScript Developer
+- GitHub: https://github.com/Rabea19
+- LinkedIn: https://www.linkedin.com/in/rabea-saad-3a893a2b1
+- Email: rabeasaadrabea199555@gmail.com
 
-## Global Constraints
+## الفكرة العامة
 
-- Developer name: `Rabea Saad`.
-- Developer role: `Full-Stack JavaScript Developer`.
-- GitHub: `https://github.com/Rabea19`.
-- LinkedIn: `https://www.linkedin.com/in/rabea-saad-3a893a2b1`.
-- Email: `rabeasaadrabea199555@gmail.com`.
-- Keep the current Login / Sign Up form on the homepage.
-- Preserve Login, Sign Up, Forgot Password, validation, error handling, and successful navigation behavior.
-- Do not change backend authentication behavior.
-- Keep React and the existing project architecture.
-- Keep Tailwind CSS styling.
-- Do not add an animation library.
-- Preserve all current routes.
-- Support mobile, tablet, and desktop.
-- Preserve semantic headings and associated form labels.
-- Preserve visible focus states.
-- Decorative animation must not interfere with assistive technology.
-- Respect `prefers-reduced-motion`.
-- Existing authentication tests must remain green.
-- Frontend production build must succeed.
-- GitHub CI must remain green after integration.
+هنفضل مستخدمين نفس React Architecture الموجودة حاليًا.
 
----
+مش هنغير أي حاجة في الـ Backend أو طريقة الـ Authentication.
 
-## File Structure
+التعديل هيكون بشكل أساسي في:
 
-### Files to modify
+- شكل الصفحة الرئيسية
+- المحتوى المكتوب
+- Portfolio Identity
+- Project Features
+- Contact Links
+- Animations
+- تحسين شكل Login / Sign Up
+- Responsive Design
 
-- `client/src/pages/Home.jsx`
-  - Developer portfolio identity.
-  - Project overview.
-  - Portfolio links.
-  - Project feature cards.
-  - Live Authentication Demo presentation.
-  - Existing Login / Sign Up logic remains here.
+الـ Login و Sign Up هيفضلوا شغالين في نفس الصفحة زي دلوقتي.
 
-- `client/src/index.css`
-  - Portfolio entrance animation.
-  - Floating decorative animation.
-  - Background visual treatment.
-  - Reduced-motion accessibility rules.
+## التقنيات الحالية
 
-### File to create
+- React 19
+- React Router
+- Tailwind CSS 4
+- Vite 8
+- Vitest
+- Testing Library
 
-- `client/src/pages/Home.test.jsx`
-  - Portfolio identity tests.
-  - Contact link tests.
-  - Project feature tests.
-  - Authentication demo UI regression tests.
+## قواعد مهمة أثناء التنفيذ
 
-### Files that must not change
-
-- `server/**`
-- `client/src/api/**`
-- `client/src/context/AuthContext.jsx`
-- Existing authentication route behavior.
+- ممنوع تغيير طريقة عمل الـ Backend.
+- ممنوع تغيير API payloads الخاصة بالـ Login أو Register.
+- ممنوع تغيير Routes الحالية.
+- ممنوع إضافة Animation Library بدون داعي.
+- هنستخدم CSS و Tailwind في الـ Animations.
+- لازم التصميم يشتغل كويس على Mobile و Tablet و Desktop.
+- لازم نحافظ على Accessibility.
+- لازم نحافظ على Labels الخاصة بالـ Inputs.
+- لازم يبقى فيه Focus واضح للأزرار والروابط.
+- لازم نحترم prefers-reduced-motion.
+- كل الاختبارات القديمة لازم تفضل ناجحة.
+- الـ Production Build لازم ينجح.
+- GitHub Actions CI لازم يفضل أخضر.
 
 ---
 
-### Task 1: Add Homepage Portfolio Regression Tests
+# الملفات اللي هنشتغل عليها
 
-**Files:**
-- Create: `client/src/pages/Home.test.jsx`
-- Read: `client/src/pages/Home.jsx`
+## هنعدل
 
-**Interfaces:**
-- Consumes: `Home` default export from `./Home.jsx`.
-- Consumes: `useAuth()` from `../context/AuthContext.jsx`.
-- Produces: automated regression coverage for the redesigned homepage.
+### client/src/pages/Home.jsx
 
-- [ ] **Step 1: Create the homepage test file**
+مسؤول عن:
 
-Create `client/src/pages/Home.test.jsx` with:
+- Portfolio Hero
+- بيانات Rabea Saad
+- Project Overview
+- Technologies
+- Feature Cards
+- GitHub / LinkedIn / Email
+- Live Authentication Demo
+- Login / Sign Up
 
-```jsx
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MemoryRouter } from "react-router";
+### client/src/index.css
 
-import Home from "./Home.jsx";
+مسؤول عن:
 
-const authMocks = vi.hoisted(() => ({
-  login: vi.fn(),
-  register: vi.fn(),
-}));
+- Animations
+- Background Effects
+- Floating Shapes
+- Fade / Slide Effects
+- Reduced Motion Support
 
-vi.mock("../context/AuthContext.jsx", () => ({
-  useAuth: () => ({
-    login: authMocks.login,
-    register: authMocks.register,
-  }),
-}));
+## هنعمل ملف جديد
 
-const renderHome = () => {
-  return render(
-    <MemoryRouter>
-      <Home />
-    </MemoryRouter>,
-  );
-};
+### client/src/pages/Home.test.jsx
 
-describe("Home portfolio page", () => {
-  beforeEach(() => {
-    authMocks.login.mockReset();
-    authMocks.register.mockReset();
-  });
+هيختبر:
 
-  it("presents Rabea Saad and the portfolio project identity", () => {
-    renderHome();
+- اسم Rabea Saad
+- Full-Stack JavaScript Developer
+- روابط GitHub و LinkedIn و Email
+- Project Features
+- Live Authentication Demo
+- Login / Sign Up
 
-    expect(screen.getByText("Rabea Saad")).toBeTruthy();
-    expect(screen.getByText("Full-Stack JavaScript Developer")).toBeTruthy();
-    expect(screen.getByText("About This Project")).toBeTruthy();
-    expect(screen.getByText("Try the Live Authentication Demo")).toBeTruthy();
-  });
+## ملفات مش هنلمسها
 
-  it("provides GitHub, LinkedIn, and email contact links", () => {
-    renderHome();
+- server/**
+- client/src/api/**
+- client/src/context/AuthContext.jsx
 
-    const githubLink = screen.getByRole("link", { name: /github/i });
-    const linkedinLink = screen.getByRole("link", { name: /linkedin/i });
-    const emailLink = screen.getByRole("link", { name: /email/i });
+---
 
-    expect(githubLink.getAttribute("href")).toBe(
-      "https://github.com/Rabea19",
-    );
+# المرحلة 1 — Tests الأول
 
-    expect(linkedinLink.getAttribute("href")).toBe(
-      "https://www.linkedin.com/in/rabea-saad-3a893a2b1",
-    );
+هنعمل Tests تحدد الشكل الجديد المطلوب قبل ما نعدل الصفحة.
 
-    expect(emailLink.getAttribute("href")).toBe(
-      "mailto:rabeasaadrabea199555@gmail.com",
-    );
-  });
+هنختبر إن الصفحة الجديدة فيها:
 
-  it("shows the main authentication project capabilities", () => {
-    renderHome();
+- Rabea Saad
+- Full-Stack JavaScript Developer
+- About This Project
+- Try the Live Authentication Demo
+- GitHub
+- LinkedIn
+- Email
 
-    expect(screen.getByText("Secure Authentication")).toBeTruthy();
-    expect(screen.getByText("Email Verification")).toBeTruthy();
-    expect(screen.getByText("Password Recovery")).toBeTruthy();
-    expect(screen.getByText("Protected Routes")).toBeTruthy();
-    expect(screen.getByText("Security Middleware")).toBeTruthy();
-    expect(screen.getByText("Automated Testing & CI")).toBeTruthy();
-  });
+وكمان هنختبر وجود المميزات:
 
-  it("keeps the Login and Sign Up experience available", () => {
-    renderHome();
+1. Secure Authentication
+2. Email Verification
+3. Password Recovery
+4. Protected Routes
+5. Security Middleware
+6. Automated Testing & CI
 
-    expect(screen.getByRole("button", { name: "Login" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "Sign Up" })).toBeTruthy();
+وفي نفس الوقت هنتأكد إن:
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+- Login موجود
+- Sign Up موجود
+- Forgot Password موجود
+- Sign Up بيظهر Full Name
+- Sign Up بيظهر Confirm Password
 
-    expect(
-      screen.getByRole("heading", { name: "Create account" }),
-    ).toBeTruthy();
+## ملف الاختبار
 
-    expect(screen.getByLabelText("Full Name")).toBeTruthy();
-    expect(screen.getByLabelText("Email")).toBeTruthy();
-    expect(screen.getByLabelText("Password")).toBeTruthy();
-    expect(screen.getByLabelText("Confirm Password")).toBeTruthy();
-  });
+هنعمل:
 
-  it("keeps Forgot Password available in Login mode", () => {
-    renderHome();
-
-    expect(
-      screen.getByRole("button", { name: "Forgot password?" }),
-    ).toBeTruthy();
-  });
-});
+```text
+client/src/pages/Home.test.jsx
