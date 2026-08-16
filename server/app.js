@@ -1,7 +1,8 @@
-import express from "express";
+﻿import express from "express";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
+import databaseMiddleware from "./middlewares/database.js";
 
 import errorHandler from "./middlewares/error.js";
 
@@ -30,8 +31,8 @@ app.use(corsMiddleware);
 /*
   CSRF Protection
 
-  بنحطها قبل Routes
-  وقبل Controllers.
+  Ø¨Ù†Ø­Ø·Ù‡Ø§ Ù‚Ø¨Ù„ Routes
+  ÙˆÙ‚Ø¨Ù„ Controllers.
 */
 app.use(csrfProtection);
 
@@ -62,8 +63,10 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", databaseMiddleware, authRoutes);
 
 app.use(errorHandler);
 
 export default app;
+
+
