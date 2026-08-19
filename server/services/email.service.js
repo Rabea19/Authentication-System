@@ -1,27 +1,23 @@
-import { createMailtrapClient } from "../config/mailtrap.js";
+import transporter from "../config/mailer.js";
 
-const sendVerificationEmail = async ({ to, code }, client) => {
-  const mailClient = client ?? createMailtrapClient();
+const sendVerificationEmail = async ({ to, code }, mailTransporter) => {
+  const mailer = mailTransporter ?? transporter;
 
   const fromName = process.env.EMAIL_FROM_NAME || "Authentication System";
-
-  const fromAddress = process.env.EMAIL_FROM_ADDRESS || "no-reply@example.com";
+  const fromAddress =
+    process.env.EMAIL_FROM_ADDRESS || process.env.SMTP_USER;
 
   const message = {
     from: {
       name: fromName,
-      email: fromAddress,
+      address: fromAddress,
     },
 
-    to: [
-      {
-        email: to,
-      },
-    ],
+    to,
 
     subject: "Verify your email address",
 
-    text: `Your verification code is ${code}. ` + "It expires in 10 minutes.",
+    text: `Your verification code is ${code}. It expires in 10 minutes.`,
 
     html: `
       <div>
@@ -42,74 +38,66 @@ const sendVerificationEmail = async ({ to, code }, client) => {
     `,
   };
 
-  const result = await mailClient.send(message);
-
-  return result;
+  return mailer.sendMail(message);
 };
 
-const sendPasswordResetEmail = async ({ to, token }, client) => {
-  const mailClient = client ?? createMailtrapClient();
+const sendPasswordResetEmail = async ({ to, token }, mailTransporter) => {
+  const mailer = mailTransporter ?? transporter;
 
   const fromName = process.env.EMAIL_FROM_NAME || "Authentication System";
-
-  const fromAddress = process.env.EMAIL_FROM_ADDRESS || "no-reply@example.com";
+  const fromAddress =
+    process.env.EMAIL_FROM_ADDRESS || process.env.SMTP_USER;
 
   const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
 
   const resetUrl =
-    `${clientUrl}/reset-password` + `?token=${encodeURIComponent(token)}`;
+    `${clientUrl}/reset-password` +
+    `?token=${encodeURIComponent(token)}`;
 
   const message = {
     from: {
       name: fromName,
-      email: fromAddress,
+      address: fromAddress,
     },
 
-    to: [
-      {
-        email: to,
-      },
-    ],
+    to,
 
     subject: "Reset your password",
 
     text:
-      "We received a request to reset " +
-      "your password.\n\n" +
+      "We received a request to reset your password.\n\n" +
       `Reset your password here: ${resetUrl}\n\n` +
       "This link expires in 15 minutes.",
 
     html: `
-        <div>
-          <h2>Reset your password</h2>
+      <div>
+        <h2>Reset your password</h2>
 
-          <p>
-            We received a request to reset
-            your password.
-          </p>
+        <p>
+          We received a request to reset
+          your password.
+        </p>
 
-          <p>
-            <a href="${resetUrl}">
-              Reset Password
-            </a>
-          </p>
+        <p>
+          <a href="${resetUrl}">
+            Reset Password
+          </a>
+        </p>
 
-          <p>
-            This link expires in
-            15 minutes.
-          </p>
+        <p>
+          This link expires in
+          15 minutes.
+        </p>
 
-          <p>
-            If you did not request this,
-            you can ignore this email.
-          </p>
-        </div>
-      `,
+        <p>
+          If you did not request this,
+          you can ignore this email.
+        </p>
+      </div>
+    `,
   };
 
-  const result = await mailClient.send(message);
-
-  return result;
+  return mailer.sendMail(message);
 };
 
 export { sendVerificationEmail, sendPasswordResetEmail };
