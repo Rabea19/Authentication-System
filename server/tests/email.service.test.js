@@ -6,16 +6,16 @@ import {
   sendPasswordResetEmail,
 } from "../services/email.service.js";
 
-test("sendVerificationEmail should send the verification code", async () => {
+test("sendVerificationEmail should send the verification code with Nodemailer", async () => {
   let sentMessage;
 
-  const fakeClient = {
-    send: async (message) => {
+  const fakeTransporter = {
+    sendMail: async (message) => {
       sentMessage = message;
 
       return {
-        success: true,
-        message_ids: ["verification-message-id"],
+        accepted: ["rabea@example.com"],
+        messageId: "verification-message-id",
       };
     },
   };
@@ -25,14 +25,12 @@ test("sendVerificationEmail should send the verification code", async () => {
       to: "rabea@example.com",
       code: "012345",
     },
-    fakeClient,
+    fakeTransporter,
   );
 
-  assert.equal(result.success, true);
+  assert.equal(result.messageId, "verification-message-id");
 
-  assert.equal(result.message_ids[0], "verification-message-id");
-
-  assert.equal(sentMessage.to[0].email, "rabea@example.com");
+  assert.equal(sentMessage.to, "rabea@example.com");
 
   assert.equal(sentMessage.subject, "Verify your email address");
 
@@ -41,16 +39,16 @@ test("sendVerificationEmail should send the verification code", async () => {
   assert.match(sentMessage.html, /012345/);
 });
 
-test("sendPasswordResetEmail should send a reset password link containing the token", async () => {
+test("sendPasswordResetEmail should send a reset password link with Nodemailer", async () => {
   let sentMessage;
 
-  const fakeClient = {
-    send: async (message) => {
+  const fakeTransporter = {
+    sendMail: async (message) => {
       sentMessage = message;
 
       return {
-        success: true,
-        message_ids: ["reset-message-id"],
+        accepted: ["rabea@example.com"],
+        messageId: "reset-message-id",
       };
     },
   };
@@ -62,14 +60,12 @@ test("sendPasswordResetEmail should send a reset password link containing the to
       to: "rabea@example.com",
       token: resetToken,
     },
-    fakeClient,
+    fakeTransporter,
   );
 
-  assert.equal(result.success, true);
+  assert.equal(result.messageId, "reset-message-id");
 
-  assert.equal(result.message_ids[0], "reset-message-id");
-
-  assert.equal(sentMessage.to[0].email, "rabea@example.com");
+  assert.equal(sentMessage.to, "rabea@example.com");
 
   assert.equal(sentMessage.subject, "Reset your password");
 

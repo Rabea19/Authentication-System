@@ -44,7 +44,7 @@ test("POST /api/auth/resend-verification-code should send a new code to an unver
   User.findOne = async () => user;
 
   app.locals.mailClient = {
-    send: async (message) => {
+    sendMail: async (message) => {
       sentEmailMessage = message;
 
       return {
@@ -77,7 +77,7 @@ test("POST /api/auth/resend-verification-code should send a new code to an unver
 
   assert.ok(sentEmailMessage);
 
-  assert.equal(sentEmailMessage.to[0].email, "rabea@example.com");
+  assert.equal(sentEmailMessage.to, "rabea@example.com");
 
   const codeMatch = sentEmailMessage.text.match(/\b\d{6}\b/);
 

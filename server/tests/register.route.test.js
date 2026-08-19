@@ -42,7 +42,7 @@ test("POST /api/auth/register should create a new user and send a verification e
   };
 
   app.locals.mailClient = {
-    send: async (message) => {
+    sendMail: async (message) => {
       sentEmailMessage = message;
 
       return {
@@ -82,7 +82,7 @@ test("POST /api/auth/register should create a new user and send a verification e
 
   assert.ok(sentEmailMessage);
 
-  assert.equal(sentEmailMessage.to[0].email, "rabea@example.com");
+  assert.equal(sentEmailMessage.to, "rabea@example.com");
 
   assert.equal(sentEmailMessage.subject, "Verify your email address");
 

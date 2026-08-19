@@ -44,7 +44,7 @@ test("POST /api/auth/forgot-password should create a reset token and send an ema
   User.findOne = async () => user;
 
   app.locals.mailClient = {
-    send: async (message) => {
+    sendMail: async (message) => {
       sentEmailMessage = message;
 
       return {
@@ -69,8 +69,8 @@ test("POST /api/auth/forgot-password should create a reset token and send an ema
   assert.equal(saveWasCalled, true);
 
   /*
-    MongoDB لازم تستقبل Hash
-    وليس Reset Token الأصلية.
+    MongoDB Ù„Ø§Ø²Ù… ØªØ³ØªÙ‚Ø¨Ù„ Hash
+    ÙˆÙ„ÙŠØ³ Reset Token Ø§Ù„Ø£ØµÙ„ÙŠØ©.
   */
   assert.match(user.passwordResetToken, /^[a-f0-9]{64}$/);
 
@@ -79,18 +79,18 @@ test("POST /api/auth/forgot-password should create a reset token and send an ema
   assert.ok(user.passwordResetExpires.getTime() > Date.now());
 
   /*
-    نتأكد أن رسالة الإيميل
-    تم تجهيزها.
+    Ù†ØªØ£ÙƒØ¯ Ø£Ù† Ø±Ø³Ø§Ù„Ø© Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„
+    ØªÙ… ØªØ¬Ù‡ÙŠØ²Ù‡Ø§.
   */
   assert.ok(sentEmailMessage);
 
-  assert.equal(sentEmailMessage.to[0].email, "rabea@example.com");
+  assert.equal(sentEmailMessage.to, "rabea@example.com");
 
   assert.equal(sentEmailMessage.subject, "Reset your password");
 
   /*
-    نستخرج Reset Token الأصلية
-    من رابط الإيميل.
+    Ù†Ø³ØªØ®Ø±Ø¬ Reset Token Ø§Ù„Ø£ØµÙ„ÙŠØ©
+    Ù…Ù† Ø±Ø§Ø¨Ø· Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„.
   */
   const tokenMatch = sentEmailMessage.text.match(/token=([a-f0-9]{64})/i);
 
@@ -99,9 +99,9 @@ test("POST /api/auth/forgot-password should create a reset token and send an ema
   const sentPlainToken = tokenMatch[1];
 
   /*
-    نعمل Hash للتوكن اللي اتبعت
-    ونتأكد إنها نفس القيمة
-    المخزنة في المستخدم.
+    Ù†Ø¹Ù…Ù„ Hash Ù„Ù„ØªÙˆÙƒÙ† Ø§Ù„Ù„ÙŠ Ø§ØªØ¨Ø¹Øª
+    ÙˆÙ†ØªØ£ÙƒØ¯ Ø¥Ù†Ù‡Ø§ Ù†ÙØ³ Ø§Ù„Ù‚ÙŠÙ…Ø©
+    Ø§Ù„Ù…Ø®Ø²Ù†Ø© ÙÙŠ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù….
   */
   const expectedHash = hashPasswordResetToken(sentPlainToken);
 
